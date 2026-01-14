@@ -28,5 +28,7 @@ fn main() -> Result<()> {
     let report_json = to_string_pretty(&result)?;
     println!("Reporte: \n{}", report_json);
 
+    std::fs::write("report.json", report_json)?;
+
     Ok(())
 }

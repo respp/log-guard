@@ -1,0 +1,14 @@
+{
+  "target_level": "error",
+  "total_found": 2,
+  "results": [
+    {
+      "line_number": 1,
+      "content": "ERROR: Fallo en la base de datos"
+    },
+    {
+      "line_number": 2,
+      "content": "ERROR: Conexión perdida"
+    }
+  ]
+}
