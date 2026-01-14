@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use std::io::{BufRead};
 use serde::Serialize;
+use std::io::BufRead;
 
 #[derive(Serialize)]
 pub struct LogEntry {
@@ -52,7 +52,6 @@ mod tests {
 
     #[test]
     fn test_case_insensitivity() {
-
         let content = "ERROR: Fallo en la base de datos\nERROR: Conexión perdida\n";
         let reader = Cursor::new(content);
 
