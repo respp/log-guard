@@ -3,6 +3,7 @@ use clap::Parser;
 use std::fs::File;
 use std::io::{BufReader};
 use std::time::Instant;
+use serde_json::to_string_pretty;
 
 use log_guard::{Cli, process_lines};
 
@@ -21,8 +22,11 @@ fn main() -> Result<()> {
 
     let result = process_lines(reader, args)?;
 
-    println!("La palabra buscada se encontro {} veces", result);
     let duration = start.elapsed();
     println!("Tiempo de ejecución: {:?}", duration);
+
+    let report_json = to_string_pretty(&result)?;
+    println!("Reporte: \n{}", report_json);
+
     Ok(())
 }

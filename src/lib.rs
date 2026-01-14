@@ -1,7 +1,20 @@
 use anyhow::{Context, Result};
 use clap::Parser;
 use std::io::{BufRead};
+use serde::Serialize;
 
+#[derive(Serialize)]
+pub struct LogEntry {
+    pub line_number: usize,
+    pub content: String,
+}
+
+#[derive(Serialize)]
+pub struct LogReport {
+    pub target_level: String,
+    pub total_found: usize,
+    pub results: Vec<LogEntry>,
+}
 /// Programa para filtrar logs de forma eficiente
 #[derive(Parser)]
 pub struct Cli {
@@ -10,17 +23,26 @@ pub struct Cli {
     pub level: String,
 }
 
-pub fn process_lines<R: BufRead>(reader: R, args: Cli) -> Result<usize> {
-    let mut count = 0;
-    let uppercase= args.level.to_uppercase();
+pub fn process_lines<R: BufRead>(reader: R, args: Cli) -> Result<LogReport> {
+    let uppercase_level = args.level.to_uppercase();
+    let mut results = Vec::new();
+
     for (index, line) in reader.lines().enumerate() {
-        let content = line.context("Error al leer una línea del archivo")?;        
-        if content.contains(&args.level) || content.contains(&uppercase) {
-            count += 1;
+        let content = line.context("Error al leer una línea del archivo")?;
+
+        if content.contains(&args.level) || content.contains(&uppercase_level) {
             println!("[Línea {}] {}", index + 1, content);
+            results.push(LogEntry {
+                line_number: index + 1,
+                content,
+            });
         }
     }
-    Ok(count)
+    Ok(LogReport {
+        target_level: args.level,
+        total_found: results.len(),
+        results,
+    })
 }
 
 #[cfg(test)]
@@ -39,6 +61,6 @@ mod tests {
             level: "ERROR".to_string(),
         };
         let result = process_lines(reader, args).unwrap();
-        assert_eq!(result, 2);
+        assert_eq!(result.total_found, 2);
     }
 }
